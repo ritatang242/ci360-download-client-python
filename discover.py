@@ -1010,3 +1010,66 @@ duration = round((end - start),2)
 logger('Done - execution time: ' + str(duration) + ' seconds','n')
 
 print('\n')
+
+
+
+#Denver Continue
+import os 
+import pandas as pd
+taskId = []
+for file in os.listdir('dscwh'):
+    if file.find('EMAIL') != -1:
+        df = pd.read_csv('dscwh\\'+file)
+        for task in set(df.task_id.values):
+            if task not in taskId:
+                taskId.append(task)
+        del df
+        
+import requests
+import json 
+import re
+from  tqdm import trange
+header = {'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGllbnRJRCI6IjAzMTdiMWUzYWQwMDAxM2FkZDc4YzhiOCJ9.3rqNUm3_lTmkwHdwfpDIPKY0dG91Hvr3-bcBw09anH4','Content-Type':'application/json'}
+r = requests.get('https://extapigwservice-demo.cidemo.sas.com/marketingDesign/tasks/',headers=header)
+r = json.loads(r.text)
+last = int(re.findall('start=[\\d]+',r['links'][2]['href'])[0][-3:])
+
+taskIdDict = {}
+count = 0 
+for page in trange(last//10):
+    r = requests.get('https://extapigwservice-demo.cidemo.sas.com/marketingDesign/tasks/?start='+str(819)+'&limit=10',headers=header)
+    print('連線成功：')
+    print('state:',str(page*10))
+    target = json.loads(r.text)['items']
+    for i in target:
+        count += 1
+        taskIdDict[i['taskId']] = taskIdDict.get(i['taskId'],i['name'])
+
+taskIdDict
+taskIdDict
+taskId
+for i in taskId:
+    print(taskIdDict.get(i,-1))
+count
+page
+
+ab = []
+for k,v in taskIdDict.items():
+    if v.find('rock_rita_') != -1:
+        print(v)
+        ab.append(k)
+ab.index('8d644de7-2049-45c4-8d49-0cc7c20dc5a7')
+len(taskIdDict)
+
+countSu = 0
+countFa = 0
+# take specific task
+for i in taskId:
+    r = requests.get(r'https://extapigwservice-demo.cidemo.sas.com/marketingDesign/tasks/'+i,headers=header)
+    r = json.loads(r.text)
+    if r.get('errorCode',0) == 0:
+        countSu +=1
+        print(r['taskId'],r['name'])
+    else:
+        countFa +=1
+        print(i,'錯誤')
