@@ -82,7 +82,7 @@ def versionUpdate():
                 logger('  backing up ' + historyFile + ' as ' + backupFile , 'n', True)
                 # back up the existing file 
                 with open(historyFilePath) as hf:
-                    with open(backupFilePath, "w") as bkf:
+                    with open(backupFilePath, "w",encoding='utf-8') as bkf:
                         for line in hf:
                             bkf.write(line)
                 
@@ -91,7 +91,7 @@ def versionUpdate():
                 headerline = 'dataRangeStart;dataRangeEnd;download_dttm;dataRangeProcessingStatus' + "\n"
                 rows = 0
                 with open(backupFilePath) as bkf:
-                    with open(historyFilePath, "w") as hf:
+                    with open(historyFilePath, "w",encoding='utf-8') as hf:
                         for line in bkf:
                             rows = rows+1                        
                             if (rows == 1):       
@@ -182,7 +182,7 @@ def logger(line, action, console=True):
     #logfile = dir_log + 'discover_download.log'
     logfilePath = dir_log + logfile
     nowDttm = str(datetime.now())
-    with open(logfilePath,'a') as log:
+    with open(logfilePath,'a',encoding='utf-8') as log:
         if action == 'n':
             log.write('\n' + nowDttm + ': ' + line)
             if console == True:
@@ -1027,7 +1027,7 @@ r = requests.get('https://extapigwservice-demo.cidemo.sas.com/marketingDesign/ta
 r = json.loads(r.text)
 last = int(re.findall('start=[\\d]+',r['links'][2]['href'])[0][-3:])
 logger('  Done - get last taskId','n')
-logger(' ********** Finished find out last taskId **********')
+logger(' ********** Finished find out last taskId **********','n')
 
 df_taskId = pd.read_csv('taskId.csv',encoding='utf-8').iloc[:,1:]
 logger('  read taskId.csv file to append new taskId','n')
